@@ -12,11 +12,16 @@
   "plugins": [
     {
       "name": "context-guard",
-      "source": ".",
+      "source": {
+        "source": "github",
+        "repo": "canellik/claude-context-guard"
+      },
       "description": "Block bloat reads, protect secrets, and warn on broad shell commands.",
       "version": "0.1.0",
       "category": "productivity",
-      "tags": ["context", "security", "tokens", "hooks"]
+      "tags": ["context", "security", "tokens", "hooks"],
+      "homepage": "https://github.com/canellik/claude-context-guard",
+      "license": "MIT"
     }
   ]
 }
