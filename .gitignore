@@ -1,0 +1,10 @@
+node_modules/
+.DS_Store
+*.log
+
+# Local Claude Code per-project state — never commit
+.claude/settings.local.json
+
+# User's own configs (only the .example versions ship)
+.contextguardignore
+.contextguardrc.json

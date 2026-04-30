@@ -1,0 +1,13 @@
+{
+  "maxFileSize": 512000,
+  "bashGuard": "block",
+  "disableReadGuard": false,
+  "disableBashGuard": false,
+  "extraDeny": [
+    "**/*.sqlite",
+    "data/**"
+  ],
+  "extraSecrets": [
+    "**/private-config.json"
+  ]
+}

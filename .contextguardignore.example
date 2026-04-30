@@ -1,0 +1,11 @@
+# context-guard allow-list (gitignore syntax).
+# Patterns here OVERRIDE the built-in deny rules — list files Claude IS allowed to read.
+#
+# Examples:
+# package-lock.json          # let Claude read this specific file
+# src/generated/types.ts     # whitelist a single generated file
+# docs/build/**              # allow everything under a built docs dir
+#
+# Bash overrides: prefix with "bash:" — if the command contains the substring, the guard passes.
+# bash:find . -maxdepth 6
+# bash:grep -R TODO src/

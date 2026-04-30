@@ -1,0 +1,43 @@
+{
+  "name": "context-guard",
+  "version": "0.1.0",
+  "description": "Block Claude Code from reading bloat files (node_modules, lockfiles, logs, generated code), protect secrets (.env, *.key, *.pem), and warn on broad shell commands that flood the context window.",
+  "author": {
+    "name": "Can Canellik",
+    "email": "ccanellik@gmail.com"
+  },
+  "homepage": "https://github.com/canellik/claude-context-guard",
+  "repository": "https://github.com/canellik/claude-context-guard",
+  "license": "MIT",
+  "keywords": [
+    "context",
+    "tokens",
+    "security",
+    "secrets",
+    "guard",
+    "hooks"
+  ],
+  "commands": "./commands",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Edit|Write|NotebookEdit|Glob|Grep",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/pretool-read-guard.js"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/pretool-bash-guard.js"
+          }
+        ]
+      }
+    ]
+  }
+}

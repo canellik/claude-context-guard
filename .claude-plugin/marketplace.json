@@ -1,0 +1,22 @@
+{
+  "name": "context-guard",
+  "owner": {
+    "name": "Can Canellik",
+    "email": "ccanellik@gmail.com",
+    "url": "https://github.com/canellik"
+  },
+  "metadata": {
+    "description": "Stop Claude Code from burning tokens on lockfiles, build output, and logs — and from reading your secrets.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "context-guard",
+      "source": ".",
+      "description": "Block bloat reads, protect secrets, and warn on broad shell commands.",
+      "version": "0.1.0",
+      "category": "productivity",
+      "tags": ["context", "security", "tokens", "hooks"]
+    }
+  ]
+}
