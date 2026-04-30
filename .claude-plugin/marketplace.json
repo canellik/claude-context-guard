@@ -13,8 +13,8 @@
     {
       "name": "context-guard",
       "source": {
-        "source": "github",
-        "repo": "canellik/claude-context-guard"
+        "source": "url",
+        "url": "https://github.com/canellik/claude-context-guard.git"
       },
       "description": "Block bloat reads, protect secrets, and warn on broad shell commands.",
       "version": "0.1.0",
