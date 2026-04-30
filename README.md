@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/canellik/claude-context-guard/blob/main/LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
-  <img alt="version" src="https://img.shields.io/badge/version-0.1.1-brightgreen.svg">
+  <img alt="version" src="https://img.shields.io/badge/version-0.1.2-brightgreen.svg">
   <img alt="claude code" src="https://img.shields.io/badge/Claude%20Code-plugin-7c3aed.svg">
   <img alt="zero deps" src="https://img.shields.io/badge/dependencies-0-success.svg">
   <img alt="node" src="https://img.shields.io/badge/node-%E2%89%A518-339933.svg">
