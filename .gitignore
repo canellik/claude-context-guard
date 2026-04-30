@@ -3,7 +3,7 @@ node_modules/
 *.log
 
 # Local Claude Code per-project state — never commit
-.claude/settings.local.json
+.claude/
 
 # User's own configs (only the .example versions ship)
 .contextguardignore
