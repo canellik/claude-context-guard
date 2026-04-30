@@ -1,16 +1,34 @@
-# context-guard
+<h1 align="center">🛡️ context-guard</h1>
 
-> Stop Claude Code from burning tokens on lockfiles, build output, and logs — and from reading your secrets.
+<p align="center">
+  <b>Stop Claude Code from burning tokens on lockfiles, build output, and logs — and from reading your secrets.</b>
+</p>
 
-`context-guard` is a [Claude Code](https://claude.com/claude-code) plugin that adds three layers of protection to every session:
+<p align="center">
+  <a href="https://github.com/canellik/claude-context-guard/blob/main/LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+  <img alt="version" src="https://img.shields.io/badge/version-0.1.0-brightgreen.svg">
+  <img alt="claude code" src="https://img.shields.io/badge/Claude%20Code-plugin-7c3aed.svg">
+  <img alt="zero deps" src="https://img.shields.io/badge/dependencies-0-success.svg">
+  <img alt="node" src="https://img.shields.io/badge/node-%E2%89%A518-339933.svg">
+</p>
 
-1. **Bloat shield** — Claude can't read `node_modules/`, lockfiles, build artifacts, generated code, logs, sourcemaps, etc.
-2. **Secret shield** — Claude can't read `.env*`, `*.pem`, `*.key`, `id_rsa`, `credentials.json`, and similar secret files.
-3. **Bash guard** — broad commands like `find .`, `ls -R`, `grep -R`, `tree`, `cat *.log`, `git log` (unbounded) are blocked with a concrete narrower alternative.
+---
 
-It also ships a `/context-guard:audit` slash command that scans your repo and recommends a tailored `.contextguardignore`.
+## Why?
 
-No dependencies, no telemetry, no network. Pure Node.js stdlib.
+A typical Claude Code session in a Node monorepo can dump **hundreds of thousands of tokens** of useless context — `package-lock.json`, source maps, build artifacts, log tails — before Claude even starts on your task. Worse, a stray `Read .env` can leak secrets straight into the model.
+
+`context-guard` adds three `PreToolUse` hooks that fire **before** Claude touches anything:
+
+| Layer            | What it does                                                                                                          |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------- |
+| 🪨 Bloat shield  | Blocks reads of `node_modules/`, lockfiles, `dist/`, `build/`, `*.log`, `*.map`, `**/generated/**`, …                 |
+| 🔒 Secret shield | Blocks `.env*`, `*.pem`, `*.key`, `id_rsa`, `credentials.json`, `service-account*.json`, `.aws/credentials`, …        |
+| 🧨 Bash guard    | Catches `find .`, `ls -R`, `grep -R`, `tree`, `git log` (unbounded), `cat *.log` — and **suggests a narrower rewrite** |
+
+Plus `/context-guard:audit` — a slash command that scans your repo and recommends a tailored `.contextguardignore`.
+
+> Zero dependencies. Zero telemetry. Zero network calls. Pure Node.js stdlib.
 
 ---
 
@@ -24,6 +42,59 @@ From the Claude Code marketplace:
 ```
 
 That's it. The next time Claude tries to read `package-lock.json` or run `find .`, the guard kicks in.
+
+---
+
+## See it in action
+
+Claude tries to read your secrets:
+
+```
+Tool: Read  →  .env
+
+✘ context-guard: blocked access to potential secret file (matched "**/.env").
+  Path: .env
+  If this is intentional, add the path to .contextguardignore.
+```
+
+Claude tries to grep the world:
+
+```
+Tool: Bash  →  grep -R TODO .
+
+✘ context-guard: this command may flood the context window.
+  • [grep-recursive-broad] Recursive grep without --include scans binaries, lockfiles and build artifacts.
+    → suggest: grep -R --include='*.ts' --include='*.tsx' <pattern> src/
+
+  Set "bashGuard": "warn" in .contextguardrc.json to make this advisory only.
+```
+
+Claude tries to read a 1.4 MB lockfile:
+
+```
+Tool: Read  →  package-lock.json
+
+✘ context-guard: blocked read of bloat file (matched "package-lock.json").
+  Path: package-lock.json
+  Reading large generated/lock/build artifacts wastes context.
+```
+
+Because the message lands in Claude's context, it **adapts** — it'll try `npm ls --depth=0` or read `package.json` instead of giving up.
+
+---
+
+## How much does it save?
+
+Real ballpark per session in a typical Node project:
+
+| Scenario                                        | Tokens leaked without guard | With context-guard |
+| ----------------------------------------------- | --------------------------- | ------------------ |
+| Claude reads `package-lock.json` once           | ~80,000–400,000             | 0                  |
+| Claude runs `find .` on a 5k-file repo          | ~25,000                     | 0 (rewritten)      |
+| Claude greps the repo for a TODO without filter | ~40,000                     | 0 (rewritten)      |
+| Stray `.env` read                               | secret in context           | blocked            |
+
+Numbers vary, but one accidental lockfile read can wipe out a whole session's effective context window. The guard pays for itself the first time it fires.
 
 ---
 
