@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="contex-guard-readme.png" alt="context-guard — Claude Code plugin that blocks bloat reads, protects secrets, and rewrites broad shell commands" width="820"/>
+</p>
+
 <h1 align="center">🛡️ context-guard</h1>
 
 <p align="center">
