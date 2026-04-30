@@ -7,7 +7,7 @@
   },
   "metadata": {
     "description": "Stop Claude Code from burning tokens on lockfiles, build output, and logs — and from reading your secrets.",
-    "version": "0.1.0"
+    "version": "0.1.1"
   },
   "plugins": [
     {
@@ -17,7 +17,7 @@
         "url": "https://github.com/canellik/claude-context-guard.git"
       },
       "description": "Block bloat reads, protect secrets, and warn on broad shell commands.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "category": "productivity",
       "tags": ["context", "security", "tokens", "hooks"],
       "homepage": "https://github.com/canellik/claude-context-guard",

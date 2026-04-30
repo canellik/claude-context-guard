@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/canellik/claude-context-guard/blob/main/LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
-  <img alt="version" src="https://img.shields.io/badge/version-0.1.0-brightgreen.svg">
+  <img alt="version" src="https://img.shields.io/badge/version-0.1.1-brightgreen.svg">
   <img alt="claude code" src="https://img.shields.io/badge/Claude%20Code-plugin-7c3aed.svg">
   <img alt="zero deps" src="https://img.shields.io/badge/dependencies-0-success.svg">
   <img alt="node" src="https://img.shields.io/badge/node-%E2%89%A518-339933.svg">
@@ -172,6 +172,42 @@ bash:find . -maxdepth 6
 | `disableBashGuard` | boolean               | `false`   | Turn off bash protection.                                        |
 | `extraDeny`        | string[] (glob)       | `[]`      | Extra bloat patterns.                                            |
 | `extraSecrets`     | string[] (glob)       | `[]`      | Extra secret patterns (treated as HIGH severity).                |
+
+---
+
+## `/context-guard:savings`
+
+See exactly how many tokens context-guard has spared you. Every block is appended to `~/.claude/context-guard/events.jsonl`, and this slash command renders a markdown report.
+
+```
+/context-guard:savings
+/context-guard:savings --since 7d
+/context-guard:savings --project my-app
+```
+
+Sample output:
+
+```
+# context-guard — savings report
+
+**Total blocks:** 47   |   **Estimated tokens saved:** ~1.14M   |   **First event:** 2026-04-12
+
+## By kind
+| count | est. tokens saved | example                    |
+|---:|---:|:--|
+| 12  | 575.0k | data/dump.json             |
+| 18  | 500.0k | package-lock.json          |
+|  9  |  65.0k | find . -maxdepth ...       |
+|  8  |   2.3k | .env                       |
+
+## Top bash rules
+| count | est. tokens saved | example                |
+|---:|---:|:--|
+|  5  | 40.0k  | grep -R TODO .         |
+|  4  | 25.0k  | find .                 |
+```
+
+> Token numbers are heuristic estimates (`bytes / 4` for reads, per-rule defaults for bash). Treat them as a directional signal, not an exact count.
 
 ---
 

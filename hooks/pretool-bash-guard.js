@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 'use strict';
 
+const path = require('path');
 const { detect, formatHits } = require('../lib/bash-rewriter');
 const { loadConfig } = require('../lib/config');
+const log = require('../lib/log');
 
 function readStdin() {
   return new Promise((resolve) => {
@@ -68,6 +70,18 @@ function emitWarn(reason) {
 
   const hits = detect(command);
   if (hits.length === 0) process.exit(0);
+
+  const project = path.basename(cfg.root);
+  const totalEst = hits.reduce((s, h) => s + (h.estTokens || 0), 0);
+  log.append({
+    kind: 'bash',
+    tool: 'Bash',
+    rules: hits.map((h) => h.id),
+    command: command.length > 200 ? command.slice(0, 200) + '…' : command,
+    project,
+    mode: cfg.bashGuard,
+    estTokens: totalEst,
+  });
 
   const body =
     `context-guard: this command may flood the context window.\n` +

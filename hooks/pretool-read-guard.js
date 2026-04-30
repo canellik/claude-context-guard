@@ -8,8 +8,15 @@ const {
   matchAny,
   normalize,
 } = require('../lib/patterns');
-const { exceedsLimit, humanSize } = require('../lib/size');
+const { exceedsLimit, humanSize, statSafe } = require('../lib/size');
 const { loadConfig } = require('../lib/config');
+const log = require('../lib/log');
+
+function estTokensForRead(absPath, fallback) {
+  const st = statSafe(absPath);
+  if (st && st.isFile()) return Math.max(50, Math.round(st.size / 4));
+  return fallback;
+}
 
 function readStdin() {
   return new Promise((resolve) => {
@@ -75,9 +82,19 @@ function isAllowed(rel, allowList) {
 
   if (isAllowed(rel, cfg.fileAllow)) pass();
 
+  const project = path.basename(cfg.root);
+
   const secrets = SECRET_PATTERNS.concat(cfg.extraSecrets);
   const secretHit = matchAny(rel, secrets);
   if (secretHit) {
+    log.append({
+      kind: 'secret',
+      tool: toolName,
+      pattern: secretHit,
+      path: rel,
+      project,
+      estTokens: estTokensForRead(abs, 2000),
+    });
     deny(
       `context-guard: blocked access to potential secret file (matched "${secretHit}").\n` +
         `Path: ${rel}\n` +
@@ -88,6 +105,14 @@ function isAllowed(rel, allowList) {
   const bloat = BLOAT_PATTERNS.concat(cfg.extraDeny);
   const bloatHit = matchAny(rel, bloat);
   if (bloatHit) {
+    log.append({
+      kind: 'bloat',
+      tool: toolName,
+      pattern: bloatHit,
+      path: rel,
+      project,
+      estTokens: estTokensForRead(abs, 20000),
+    });
     deny(
       `context-guard: blocked read of bloat file (matched "${bloatHit}").\n` +
         `Path: ${rel}\n` +
@@ -98,6 +123,14 @@ function isAllowed(rel, allowList) {
 
   const overSize = exceedsLimit(abs, cfg.maxFileSize);
   if (overSize !== null) {
+    log.append({
+      kind: 'oversize',
+      tool: toolName,
+      path: rel,
+      project,
+      bytes: overSize,
+      estTokens: Math.round(overSize / 4),
+    });
     deny(
       `context-guard: file exceeds size limit (${humanSize(overSize)} > ${humanSize(cfg.maxFileSize)}).\n` +
         `Path: ${rel}\n` +

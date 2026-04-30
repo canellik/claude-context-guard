@@ -1,6 +1,6 @@
 {
   "name": "context-guard",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Block Claude Code from reading bloat files (node_modules, lockfiles, logs, generated code), protect secrets (.env, *.key, *.pem), and warn on broad shell commands that flood the context window.",
   "author": {
     "name": "Can Canellik",
